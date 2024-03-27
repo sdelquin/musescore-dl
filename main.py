@@ -1,7 +1,10 @@
 import sys
 
-from lib.handler import Handler
+from lib.manager import Manager
+from lib.utils import init_logger
 
-handler = Handler(sys.argv[1])
-score = handler.get_score()
+logger = init_logger()
+
+manager = Manager(sys.argv[1])
+score = manager.get_score()
 score.save_file()
