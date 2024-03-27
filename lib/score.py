@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import fpdf
 from logzero import logger
 
@@ -7,7 +9,7 @@ from . import utils
 class Score:
     def __init__(self, output_path: str):
         logger.info('🧱 Building Score')
-        self.output_path = output_path
+        self.output_path = Path(output_path)
         self.pdf = fpdf.FPDF(unit='pt')
 
     def add_page(self, page_url: str):
@@ -24,4 +26,5 @@ class Score:
 
     def save_file(self):
         logger.info(f'💾 Saving score to {self.output_path}')
+        self.output_path.parent.mkdir(parents=True, exist_ok=True)
         self.pdf.output(self.output_path)

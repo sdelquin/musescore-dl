@@ -1,4 +1,4 @@
 .python-version
 *.pyc
-*.pdf
 *.log
+/scores

@@ -42,15 +42,17 @@ class Manager:
                 return m.group(1)
         return ''
 
-    def get_score(self, score_path=None) -> Score:
+    def get_score(self, output_score_path=None) -> Score:
         score_title = self._get_score_title()
         logger.debug(f'✨ {score_title}')
-        if not score_path:
+        if not output_score_path:
             if score_title:
-                score_path = slugify(score_title.strip()) + '.pdf'
+                output_score_path = settings.SCORE_OUTPUT_DIR / (
+                    slugify(score_title.strip()) + '.pdf'
+                )
             else:
-                score_path = settings.DEFAULT_SCORE_FILENAME
-        score = Score(score_path)
+                output_score_path = settings.SCORE_OUTPUT_DIR / settings.DEFAULT_SCORE_FILENAME
+        score = Score(output_score_path)
         css_selector = settings.SCORE_PAGES_SELECTOR
         for page_no, div in enumerate(
             self.driver.find_elements(By.CSS_SELECTOR, css_selector), start=1
