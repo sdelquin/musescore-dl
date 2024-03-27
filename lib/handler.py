@@ -8,6 +8,8 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 from slugify import slugify
 
+import settings
+
 from .score import Score
 
 
@@ -21,8 +23,9 @@ class Handler:
         self._accept_privacy()
 
     def _accept_privacy(self) -> None:
-        url = '/html/body/div[1]/div/div/div/div[2]/div/button[2]'
-        privacy_agree_button = WebDriverWait(self.driver, 10).until(
+        url = settings.PRIVACY_ACCEPT_XPATH
+        timeout = settings.SELENIUM_TIMEOUT
+        privacy_agree_button = WebDriverWait(self.driver, timeout).until(
             EC.presence_of_element_located((By.XPATH, url))
         )
         privacy_agree_button.click()
@@ -35,9 +38,14 @@ class Handler:
         return ''
 
     def get_score(self, score_path=None) -> Score:
-        score_path = score_path or f'{slugify(self._get_score_title())}.pdf' or 'score.pdf'
+        score_path = (
+            score_path
+            or f'{slugify(self._get_score_title())}.pdf'
+            or settings.DEFAULT_SCORE_FILENAME
+        )
         score = Score(score_path)
-        for div in self.driver.find_elements(By.CSS_SELECTOR, 'div#jmuse-scroller-component>div'):
+        css_selector = settings.SCORE_PAGES_SELECTOR
+        for div in self.driver.find_elements(By.CSS_SELECTOR, css_selector):
             if div.get_attribute('class'):
                 self.driver.execute_script('arguments[0].scrollIntoView();', div)
                 self.actions.move_to_element(div).perform()
